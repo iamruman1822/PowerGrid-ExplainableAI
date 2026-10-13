@@ -1,9 +1,19 @@
 <div align="center">
 
-# PowerGrid-ExplainableAI
-### Explainable Intelligence for Rural Microgrid Operations
+# ⚡ PowerGrid-ExplainableAI
+### Explainable Artificial Intelligence for Rural Microgrid & Battery Fleet Management
 
-A full-stack platform that combines forecasting, battery diagnostics, and explainable dispatch decisions into one operational dashboard.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-3.x-black?logo=flask&logoColor=white)](https://flask.palletsprojects.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-CNN%2BLSTM-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org)
+[![XGBoost](https://img.shields.io/badge/XGBoost-Dispatch_Classifier-EB5424)](https://xgboost.readthedocs.io)
+[![SHAP](https://img.shields.io/badge/SHAP-Explainability-brightgreen)](https://shap.readthedocs.io)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A full-stack microgrid management platform combining probabilistic CNN+LSTM renewable forecasting, NASA battery fleet degradation diagnostics, and transparent XGBoost + SHAP explainable dispatch intelligence.
 
 </div>
 
@@ -39,12 +49,14 @@ flowchart LR
 ## 3. Monorepo Layout
 
 ```text
-XplainableAi/
-  backend/                               Flask API server
-  frontend/                              React dashboard app
-  CNN+LSTM-FORECASTER/                   Forecast model assets and outputs
-  dispatch_engine/                       Dispatch model artifacts and explanations
-  ZerodayExplorers_BatteryDegradation/   Battery analysis outputs
+PowerGrid-ExplainableAI/
+  run.py                                 Unified 1-command full-stack launcher
+  start.bat                              Windows 1-click startup script
+  backend/                               Flask API server & PostgreSQL ORM
+  frontend/                              React + Vite glassmorphic dashboard app
+  CNN+LSTM-FORECASTER/                   48h solar/wind/load CNN+LSTM models & predictions
+  dispatch_engine/                       XGBoost dispatch classifier & SHAP explanations
+  ZerodayExplorers_BatteryDegradation/   NASA battery degradation models & diagnostic charts
 ```
 
 ---
@@ -123,16 +135,33 @@ The backend aggregates model outputs, manages PostgreSQL database persistence (u
 
 ---
 
-## 6. Local Development
+## 6. Quickstart & Local Development
 
-### Prerequisites
+### Option A: ⚡ Run Entire Full-Stack in 1 Command (Recommended)
 
-- Node.js 18+
-- Python 3.10+
-- npm and pip
+You can launch both the **Flask Backend (Port 5000)** and **React Frontend (Port 5173)** simultaneously from the repository root:
 
-### Step A: Run Backend
+```powershell
+python run.py
+```
 
+*Or on Windows, simply run:*
+```cmd
+start.bat
+```
+
+> **What `run.py` does automatically:**
+> - Detects your Python runtime and virtual environment (`backend/venv`).
+> - Installs frontend dependencies automatically on first run (`npm install`).
+> - Boots Flask API, connects to PostgreSQL, and auto-seeds tables.
+> - Boots Vite frontend dev server at `http://localhost:5173`.
+> - Handles graceful shutdown with `Ctrl+C` cleanly terminating all child services.
+
+---
+
+### Option B: Run Services Manually (Separate Terminals)
+
+#### Terminal 1: Backend
 ```powershell
 cd backend
 python -m venv venv
@@ -140,27 +169,21 @@ venv\Scripts\activate
 pip install -r requirements.txt
 python app.py
 ```
+*Backend URL: `http://localhost:5000`*
 
-Backend default URL:
-- http://localhost:5000
-
-### Step B: Run Frontend
-
+#### Terminal 2: Frontend
 ```powershell
 cd frontend
 npm install
 npm run dev
 ```
-
-Frontend default URL:
-- http://localhost:5173
-
-The frontend dev server proxies /api requests to the backend on port 5000.
+*Frontend URL: `http://localhost:5173`*
 
 ---
 
 ## 7. Environment & Database Configuration
 
+### PostgreSQL Connection
 The backend automatically connects to local PostgreSQL if available, or falls back to local datasets and offline demo mode:
 
 ```env
@@ -173,8 +196,12 @@ PGDATABASE=xplainable_ai
 
 On startup, `database.py` automatically initializes tables (`users`, `user_settings`, `battery_fleet`, `forecast_records`, `dispatch_history`) and seeds the data if the tables are empty.
 
-- Frontend environment: `frontend/.env` is configured with `VITE_API_URL=http://localhost:5000`.
-- Quick Access: The dashboard includes a **⚡ Quick Demo Access (1-Click)** button for immediate evaluator exploration.
+### Evaluator Demo Credentials
+| Field | Value |
+| :--- | :--- |
+| **Email** | `demo@xplainable.ai` |
+| **Password** | `demo123` |
+| **1-Click Quick Demo** | Click the **⚡ Quick Demo Access (1-Click)** button on the landing page for immediate evaluator exploration. |
 
 ---
 
