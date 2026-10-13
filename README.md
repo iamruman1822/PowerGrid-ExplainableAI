@@ -137,7 +137,7 @@ The backend aggregates model outputs, manages PostgreSQL database persistence (u
 
 ## 6. Quickstart & Local Development
 
-### Option A: ⚡ Run Entire Full-Stack in 1 Command (Recommended)
+### Option A: ⚡ Run Entire Full-Stack in 1 Command
 
 You can launch both the **Flask Backend (Port 5000)** and **React Frontend (Port 5173)** simultaneously from the repository root:
 
@@ -145,19 +145,6 @@ You can launch both the **Flask Backend (Port 5000)** and **React Frontend (Port
 python run.py
 ```
 
-*Or on Windows, simply run:*
-```cmd
-start.bat
-```
-
-> **What `run.py` does automatically:**
-> - Detects your Python runtime and virtual environment (`backend/venv`).
-> - Installs frontend dependencies automatically on first run (`npm install`).
-> - Boots Flask API, connects to PostgreSQL, and auto-seeds tables.
-> - Boots Vite frontend dev server at `http://localhost:5173`.
-> - Handles graceful shutdown with `Ctrl+C` cleanly terminating all child services.
-
----
 
 ### Option B: Run Services Manually (Separate Terminals)
 
