@@ -1,6 +1,6 @@
 <div align="center">
 
-# XplainableAI
+# PowerGrid-ExplainableAI
 ### Explainable Intelligence for Rural Microgrid Operations
 
 A full-stack platform that combines forecasting, battery diagnostics, and explainable dispatch decisions into one operational dashboard.
