@@ -1,0 +1,30 @@
+# Python virtual environments & caches
+.venv/
+venv/
+env/
+backend/venv/
+backend/.venv/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Node dependencies & build artifacts
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+.env.local
+.env.*.local
+
+# IDE & OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Embedded sub-git if present
+backend/.git/
+
+# Raw large dataset binaries
+*.mat

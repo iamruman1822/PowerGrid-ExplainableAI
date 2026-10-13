@@ -1,0 +1,18 @@
+{
+  "seq_len": 10,
+  "feature_cols": [
+    "mean_voltage",
+    "min_voltage",
+    "mean_current",
+    "mean_temp",
+    "max_temp",
+    "discharge_duration",
+    "cycle_num_norm"
+  ],
+  "target_col": "capacity",
+  "test_mae": 0.65149,
+  "test_rmse": 0.84728,
+  "test_mape": 940.594,
+  "epochs_run": 31,
+  "best_val_loss": 0.095524
+}
