@@ -120,8 +120,12 @@ RECOMMENDATIONS = {
 }
 
 # ── load model ────────────────────────────────────────────────────────────────
-model = xgb.XGBClassifier()
-model.load_model(MODEL_PATH)
+try:
+    model = xgb.XGBClassifier()
+    model.load_model(MODEL_PATH)
+except Exception:
+    model = xgb.Booster()
+    model.load_model(MODEL_PATH)
 explainer = shap.TreeExplainer(model)
 
 # ── build feature vector ──────────────────────────────────────────────────────
@@ -185,7 +189,11 @@ def run_scenario(scenario: dict):
     X = build_features(**{k: v for k, v in scenario.items()
                           if k not in ("name", "story", "time_label")})
 
-    proba    = model.predict_proba(X)[0]
+    if hasattr(model, "predict_proba"):
+        proba = model.predict_proba(X)[0]
+    else:
+        dm = xgb.DMatrix(X)
+        proba = model.predict(dm)[0]
     pred_cls = int(np.argmax(proba))
     conf     = float(proba[pred_cls])
 
@@ -211,9 +219,9 @@ def run_scenario(scenario: dict):
         print(f"  {line}")
 
     # Sensor snapshot
-    print(f"\n{'─' * W}")
+    print(f"\n{'-' * W}")
     print("  SENSOR SNAPSHOT")
-    print(f"{'─' * W}")
+    print(f"{'-' * W}")
     sensor_rows = [
         ("Solar output (best estimate)",  f"{scenario['solar_q50']:.1f} kW"),
         ("Wind output",                   f"{scenario['wind_q50']:.1f} kW"),
@@ -229,9 +237,9 @@ def run_scenario(scenario: dict):
         print(f"  {label:<35} {val}")
 
     # Decision
-    print(f"\n{'─' * W}")
+    print(f"\n{'-' * W}")
     print("  DISPATCH DECISION")
-    print(f"{'─' * W}")
+    print(f"{'-' * W}")
 
     CLASS_ICONS = {0: "SHIELD", 1: "BALANCE", 2: "ROCKET"}
     icon = CLASS_ICONS[pred_cls]
@@ -247,9 +255,9 @@ def run_scenario(scenario: dict):
         print(f"    {name:<15} [{bar_str}] {p*100:.1f}%")
 
     # Why
-    print(f"\n{'─' * W}")
+    print(f"\n{'-' * W}")
     print("  WHY THIS DECISION WAS MADE  (top 5 SHAP drivers)")
-    print(f"{'─' * W}")
+    print(f"{'-' * W}")
     for rank, fi in enumerate(top5_idx, 1):
         feat     = FEATURE_COLS[fi]
         readable = OPERATOR_DESC.get(feat, feat).capitalize()
@@ -273,9 +281,9 @@ def run_scenario(scenario: dict):
         print(f"     Effect: {direction} {CLASS_NAMES[pred_cls]}")
 
     # Recommendation
-    print(f"\n{'─' * W}")
+    print(f"\n{'-' * W}")
     print("  OPERATOR RECOMMENDATION")
-    print(f"{'─' * W}")
+    print(f"{'-' * W}")
     for line in textwrap.wrap(RECOMMENDATIONS[pred_cls], width=W - 2):
         print(f"  {line}")
 

@@ -85,7 +85,7 @@ _explainer = None
 
 
 def _load_model():
-    """Lazy-load XGBoost XGBClassifier and SHAP TreeExplainer."""
+    """Lazy-load XGBoost model and SHAP TreeExplainer with Booster fallback."""
     global _model, _explainer
     if _model is not None:
         return _model, _explainer
@@ -93,12 +93,21 @@ def _load_model():
     try:
         import xgboost as xgb
         import shap
-        # Load as XGBClassifier — matches how dispatch_engine.py saved it
-        clf = xgb.XGBClassifier()
-        clf.load_model(MODEL_PATH)
-        print(f"[INFO] Dispatch model loaded as XGBClassifier")
-        _model = clf
-        _explainer = shap.TreeExplainer(clf)
+        # Try loading as XGBClassifier first
+        try:
+            clf = xgb.XGBClassifier()
+            clf.load_model(MODEL_PATH)
+            _model = clf
+            _explainer = shap.TreeExplainer(clf)
+            print("[INFO] Dispatch model loaded as XGBClassifier")
+        except Exception as e_clf:
+            # Fallback to direct XGBoost Booster which is immune to scikit-learn tags bugs
+            bst = xgb.Booster()
+            bst.load_model(MODEL_PATH)
+            _model = bst
+            _explainer = shap.TreeExplainer(bst)
+            print(f"[INFO] Dispatch model loaded as XGBoost Booster (bypassed sklearn tags issue: {e_clf})")
+
         return _model, _explainer
     except Exception as e:
         print(f"[WARN] Could not load dispatch model: {e}")
@@ -192,8 +201,14 @@ def predict_and_explain(params):
     }
 
     X_live = pd.DataFrame([row])[FEATURE_COLS]
-    # XGBClassifier API — returns probabilities directly
-    proba = model.predict_proba(X_live)[0]
+    # Extract class probabilities (works for both XGBClassifier and xgb.Booster)
+    if hasattr(model, "predict_proba"):
+        proba = model.predict_proba(X_live)[0]
+    else:
+        import xgboost as xgb
+        dm = xgb.DMatrix(X_live)
+        proba = model.predict(dm)[0]
+
     pred_cls = int(np.argmax(proba))
     conf = float(proba[pred_cls])
 
